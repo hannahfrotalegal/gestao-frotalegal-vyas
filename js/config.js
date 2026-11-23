@@ -5,12 +5,12 @@
  */
 window.APP_CONFIG = {
   firebase: {
-    apiKey: "COLE_AQUI_O_API_KEY",
-    authDomain: "",
-    projectId: "",
-    storageBucket: "",
-    messagingSenderId: "",
-    appId: ""
+    apiKey: "AIzaSyC3HdCNCOkgNTMFqaVjJgsU1fxAIpr1fw4",
+    authDomain: "gestao-frotalegal-vyas.firebaseapp.com",
+    projectId: "gestao-frotalegal-vyas",
+    storageBucket: "gestao-frotalegal-vyas.firebasestorage.app",
+    messagingSenderId: "116130930564",
+    appId: "1:116130930564:web:a3c32887690ccd245787d1"
   },
   masters: ["hannah.frotalegal@gmail.com", "dvdcce@gmail.com"]
 };
