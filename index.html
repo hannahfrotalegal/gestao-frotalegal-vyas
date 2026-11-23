@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Gestão Frota Legal · Grupo Vyas</title>
+<link rel="icon" href="img/logo-vyas.png">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ================= LOGIN ================= -->
+<div id="login" class="hidden">
+  <div class="lg-box">
+    <div class="lg-side">
+      <img src="img/logo-vyas.png" alt="Grupo Vyas">
+      <h1>Gestão Frota Legal</h1>
+      <p>Documentação, prontuário e evolução das faixas dos condutores do Grupo Vyas.</p>
+      <div class="marca"></div>
+    </div>
+    <form class="lg-form" id="lgForm" autocomplete="on" novalidate>
+      <h2>Entrar</h2>
+      <div class="sub">Use o e-mail e a senha cadastrados pela Demarco.</div>
+      <div class="fld"><label for="lgMail">E-mail</label><input id="lgMail" type="email" autocomplete="username" required></div>
+      <div class="fld"><label for="lgPass">Senha</label><input id="lgPass" type="password" autocomplete="current-password" required></div>
+      <button class="btn full" type="submit" id="lgBtn">Entrar</button>
+      <div style="margin-top:12px"><button type="button" class="lnk" id="lgEsqueci">Esqueci minha senha</button></div>
+      <div class="msg" id="lgMsg"></div>
+      <div class="demo hidden" id="lgDemo"><b>Modo demonstração:</b> o Firebase ainda não foi configurado (arquivo <code>js/config.js</code>). Entre com qualquer e-mail; nada é gravado — os dados somem ao fechar a página.</div>
+    </form>
+  </div>
+</div>
+
+<!-- ================= APP ================= -->
+<div id="app" class="hidden">
+  <aside class="side">
+    <img class="logo" src="img/logo-vyas.png" alt="Grupo Vyas">
+    <nav class="nav" id="nav"></nav>
+    <div class="user"><span>Conectado como</span><b id="uMail"></b><span id="uPerfil"></span><br><button id="btnSair">Sair</button></div>
+  </aside>
+  <main>
+    <div class="ttl"><h1>Gestão Frota Legal</h1><h2 id="subtitulo"></h2></div>
+    <section class="card filtros" id="filtros"></section>
+    <div class="page" id="page"></div>
+    <footer><span id="ultAtual"></span><img src="img/logo-demarco.png" alt="demarco"></footer>
+  </main>
+</div>
+
+<div id="modal" class="hidden"><div class="md"><div class="hd"><button id="mdVoltar" title="Voltar">&#8630;</button><h3 id="mdTit"></h3><button id="mdFechar" title="Fechar">&times;</button></div><div class="tw" id="mdBody"></div></div></div>
+<div id="carregando" class="load hidden">Carregando…</div>
+
+<script src="js/config.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+<script src="js/store.js"></script>
+<script src="js/processa.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

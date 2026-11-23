@@ -1,0 +1,43 @@
+rules_version = '2';
+// Gestão Frota Legal — Grupo Vyas
+// Perfis: admin (vê tudo, cadastra usuários e envia bases) · usuario (só lê as combinações ambiente × filial liberadas).
+// O perfil de cada e-mail fica em usuarios/{email}: { perfil, ativo, acessos: { DPO: ['*'] | [filiais], SDPO: [...] } }.
+// Os e-mails master abaixo são sempre admin — mantenha igual à lista "masters" do arquivo js/config.js.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function logado()    { return request.auth != null && request.auth.token.email != null; }
+    function email()     { return request.auth.token.email.lower(); }
+    function master()    { return logado() && email() in ['hannah.frotalegal@gmail.com', 'dvdcce@gmail.com']; }
+    function temPerfil() { return logado() && exists(/databases/$(database)/documents/usuarios/$(email())); }
+    function perfil()    { return get(/databases/$(database)/documents/usuarios/$(email())).data; }
+    function ativo()     { return master() || (temPerfil() && perfil().ativo == true); }
+    function isAdmin()   { return master() || (temPerfil() && perfil().ativo == true && perfil().perfil == 'admin'); }
+    // usuário comum: o ambiente precisa estar liberado com '*' (todas as filiais) ou com a filial do documento
+    function ve(amb, filial) {
+      let acc = perfil().get('acessos', {});
+      return temPerfil() && perfil().ativo == true && (amb in acc) && (('*' in acc[amb]) || (filial in acc[amb]));
+    }
+    function podeLer()   { return isAdmin() || ve(resource.data.amb, resource.data.filial); }
+
+    // Dados do painel: cada documento é de um ambiente × filial
+    match /atual/{id} { allow read: if podeLer(); allow write: if isAdmin(); }
+    match /meses/{id} { allow read: if podeLer(); allow write: if isAdmin(); }
+    match /ocorr/{id} { allow read: if podeLer(); allow write: if isAdmin(); }
+
+    // Índice (nomes de filiais, meses e datas de atualização): qualquer usuário ativo lê; só admin grava.
+    match /config/indice { allow read: if ativo(); allow write: if isAdmin(); }
+    // Histórico de cargas: só admin.
+    match /config/cargas { allow read, write: if isAdmin(); }
+
+    // Cadastro de acessos: cada pessoa lê o próprio perfil; só admin lista e altera.
+    match /usuarios/{mail} {
+      allow get:   if isAdmin() || (logado() && mail == email());
+      allow list:  if isAdmin();
+      allow write: if isAdmin();
+    }
+
+    // Todo o resto: bloqueado.
+    match /{document=**} { allow read, write: if false; }
+  }
+}
