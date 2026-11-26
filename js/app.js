@@ -261,7 +261,8 @@
   function rodape() {
     const ambs = [...new Set(partesVisiveis().map(p => p.amb))];
     const g = ambs.map(a => IDX && IDX.amb[a] && IDX.amb[a].gerado).filter(Boolean).sort().pop();
-    $('ultAtual').innerHTML = esc(g ? 'Última Atualização: ' + dtHoraBR(g) : 'Nenhuma base carregada ainda') + (S.demo ? '<span class="badge-demo">Modo demonstração — nada é gravado</span>' : '');
+    $('ultAtual').innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><div><small>Última atualização</small><b>' + esc(g ? dtHoraBR(g) : 'nenhuma base carregada') + '</b></div>';
+    $('rodInfo').innerHTML = S.demo ? '<span class="badge-demo" style="margin-left:0">Modo demonstração — nada é gravado</span>' : '';
   }
   function render() { nav(); $('subtitulo').textContent = TITULO[PAGE]; filtros(); pagina(); rodape(); }
   function pagina() {
