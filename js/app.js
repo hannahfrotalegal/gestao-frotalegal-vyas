@@ -202,8 +202,32 @@
     if (onInfo) { const b = el('button', { class: 'info', title: 'Ver os casos', type: 'button' }, 'i'); b.onclick = e => { e.stopPropagation(); onInfo(); }; k.appendChild(b); k.onclick = onInfo; }
     return k;
   }
-  function modal(titulo, cols, rows, ord) {
-    $('mdTit').textContent = titulo; const b = $('mdBody'); b.innerHTML = ''; b.appendChild(tabela(cols, rows, { ord })); $('modal').classList.remove('hidden');
+  function modal(titulo, cols, rows, ord, topo) {
+    $('mdTit').textContent = titulo; const b = $('mdBody'); b.innerHTML = '';
+    if (topo) b.appendChild(el('div', { class: 'md-resumo' }, topo));
+    b.appendChild(tabela(cols, rows, { ord })); $('modal').classList.remove('hidden');
+  }
+  // histórico completo de ocorrências de um condutor (todas as que estão no painel, sem filtro de período)
+  function historicoCondutor(c) {
+    const alvo = P.norm(c.n);
+    const L = (DATA.oc || []).filter(o => P.norm(o.nome) === alvo);
+    const datas = L.map(o => o.data).sort();
+    const pts = L.reduce((s, o) => s + (o.peso || 0), 0);
+    const topo = '<div><small>Condutor</small><b>' + esc(tc(c.n)) + '</b></div><div><small>Filial</small><b>' + esc(c.filial) + '</b></div>' +
+      '<div><small>Pontuação atual</small><b>' + n2(c.p) + ' ' + chipFx(c.f) + '</b></div><div><small>Ocorrências</small><b>' + n0(L.length) + '</b></div>' +
+      '<div><small>Pontos gerados</small><b>' + n2(pts) + '</b></div><div><small>Período</small><b>' + (datas.length ? dBR(datas[0]) + ' a ' + dBR(datas[datas.length - 1]) : '—') + '</b></div>';
+    modal('Histórico de Ocorrências — ' + tc(c.n), [
+      { t: 'Data', k: 'data', cls: 'c', fmt: dBR }, { t: 'Tipo de Ocorrência', k: 'tipo' }, { t: 'Ocorrência', k: 'oc' },
+      { t: 'Pontos', k: 'peso', cls: 'n', num: 1, fmt: n2 }, { t: 'Filial', k: 'filial' }, { t: 'Situação', k: 'venc', fmt: v => v ? '<span style="color:var(--muted)">Mensal vencida</span>' : '' },
+    ], L, { k: 'data', dir: -1 }, topo);
+  }
+  const nomeClicavel = v => '<button type="button" class="lnk-c" data-cond="' + esc(v) + '" title="Ver o histórico de ocorrências">' + esc(tc(v)) + '</button>';
+  function ligarCondutores(painelEl, lista) {
+    painelEl.addEventListener('click', e => {
+      const b = e.target.closest('[data-cond]'); if (!b) return;
+      const c = lista.find(x => x.n === b.dataset.cond); if (c) historicoCondutor(c);
+    });
+    return painelEl;
   }
   $('mdFechar').onclick = $('mdVoltar').onclick = () => $('modal').classList.add('hidden');
   $('modal').onclick = e => { if (e.target.id === 'modal') $('modal').classList.add('hidden'); };
@@ -359,9 +383,9 @@
     const r2 = el('div', { class: 'g-row h-270', style: 'grid-template-columns:1fr 1.15fr 1.15fr' });
     const fils = [...new Set(C.map(c => c.filial))].map(f => { const l = C.filter(c => c.filial === f); return { filial: f, v: l.reduce((s, c) => s + (c.p || 0), 0) / l.length }; });
     r2.appendChild(painel('Pontuação por Filial (Média)', tabela([{ t: 'Filial', k: 'filial' }, { t: 'Pontuação', k: 'v', cls: 'n', num: 1, fmt: n2 }], fils, { ord: { k: 'v', dir: -1 } })));
-    const colsC = [{ t: 'Filial', k: 'filial' }, { t: 'Condutor', k: 'n', fmt: v => esc(tc(v)) }, { t: 'Pontuação', k: 'p', cls: 'n', num: 1, fmt: n2 }];
-    r2.appendChild(painel('Pontuação por Condutor', tabela(colsC, C, { ord: { k: 'p', dir: -1 } })));
-    r2.appendChild(painel('Condutores Críticos', tabela(colsC.concat([{ t: 'Faixa', k: 'f', fmt: chipFx }]), C.filter(critica), { ord: { k: 'p', dir: -1 } }), '', '(Faixa Vermelha e Roxa)'));
+    const colsC = [{ t: 'Filial', k: 'filial' }, { t: 'Condutor', k: 'n', fmt: nomeClicavel }, { t: 'Pontuação', k: 'p', cls: 'n', num: 1, fmt: n2 }];
+    r2.appendChild(ligarCondutores(painel('Pontuação por Condutor', tabela(colsC, C, { ord: { k: 'p', dir: -1 } }), '', 'clique no nome para ver o histórico de ocorrências'), C));
+    r2.appendChild(ligarCondutores(painel('Condutores Críticos', tabela(colsC.concat([{ t: 'Faixa', k: 'f', fmt: chipFx }]), C.filter(critica), { ord: { k: 'p', dir: -1 } }), '', '(Faixa Vermelha e Roxa)'), C));
     pg.appendChild(r2);
   }
 

@@ -197,3 +197,13 @@ table.t td.vl{border-right:1.5px solid #333}
   .g-vg{grid-template-columns:1fr}.kg,.fx-cards{grid-template-columns:1fr 1fr}
   .lg-box{grid-template-columns:1fr}.lg-side{display:none}
 }
+
+/* nome do condutor clicável e resumo do histórico */
+.lnk-c{background:none;border:0;padding:0;margin:0;font:inherit;color:var(--azul);text-align:left;cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px}
+.lnk-c:hover{color:var(--azul2);text-decoration:underline}
+.md{width:min(960px,95vw)}
+.md-resumo{display:flex;flex-wrap:wrap;gap:8px 26px;background:#f3f6f9;border-radius:8px;padding:10px 14px;margin:4px 0 10px}
+.md-resumo small{display:block;font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:600}
+.md-resumo b{font-size:14.5px;color:var(--tit)}
+#mdBody{display:flex;flex-direction:column}
+#mdBody .tw{max-height:60vh}
